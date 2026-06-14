@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedTerm AI — مساعدك الذكي على واتساب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:    #1D9E75;
+    --green-dk: #0F6E56;
+    --green-lt: #E1F5EE;
+    --green-md: #9FE1CB;
+    --teal:     #0F6E56;
+    --gold:     #BA7517;
+    --gold-lt:  #FAEEDA;
+    --text:     #1a1a1a;
+    --muted:    #5F5E5A;
+    --border:   rgba(0,0,0,0.08);
+    --card-bg:  #ffffff;
+    --page-bg:  #f7f9f8;
+    --radius:   16px;
+    --radius-sm:10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+    background: rgba(247,249,248,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-size: 1.25rem; font-weight: 800;
+    color: var(--green-dk);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-cta {
+    background: var(--green);
+    color: #fff;
+    border: none; border-radius: 50px;
+    padding: 10px 22px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--green-dk); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 100px 2rem 4rem;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(29,158,117,0.12) 0%, transparent 70%),
+      var(--page-bg);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-lt);
+    color: var(--green-dk);
+    border: 1px solid var(--green-md);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.82rem; font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: 0.03em;
+  }
+  .hero-badge .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(1.3); }
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    max-width: 800px;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 .accent { color: var(--green); }
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 560px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green);
+    color: #fff;
+    border: none; border-radius: 50px;
+    padding: 14px 32px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--green-dk); transform: translateY(-2px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+    color: var(--green-dk);
+    border: 1.5px solid var(--green);
+    border-radius: 50px;
+    padding: 14px 32px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-secondary:hover { background: var(--green-lt); transform: translateY(-2px); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--green-dk);
+    color: #fff;
+    padding: 2rem;
+    display: flex; justify-content: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 800; display: block; }
+  .stat-lbl { font-size: 0.85rem; opacity: 0.8; }
+
+  /* ── SECTION ── */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    display: inline-block;
+    background: var(--green-lt);
+    color: var(--green-dk);
+    border-radius: 50px;
+    padding: 4px 14px;
+    font-size: 0.78rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  .section-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 3rem;
+  }
+
+  /* ── FEATURES GRID ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .feat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .feat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(15,110,86,0.1);
+  }
+  .feat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: var(--green-lt);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .feat-card h3 {
+    font-size: 1rem; font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+  .feat-card p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── BIG FEATURES ── */
+  .big-features { display: flex; flex-direction: column; gap: 4rem; }
+  .big-feat {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .big-feat.reverse { direction: ltr; }
+  .big-feat.reverse > * { direction: rtl; }
+  .big-feat-text {}
+  .big-feat-text h2 {
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  .big-feat-text p { color: var(--muted); margin-bottom: 1.25rem; }
+  .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .feat-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.9rem;
+  }
+  .feat-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 800;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .big-feat-visual {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .chat-bubble {
+    max-width: 85%;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .chat-user {
+    background: var(--green);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-left-radius: 4px;
+  }
+  .chat-bot {
+    background: var(--green-lt);
+    color: var(--green-dk);
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .chat-label.right { text-align: left; }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .price-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+  }
+  .price-card.featured {
+    border: 2px solid var(--green);
+    background: linear-gradient(160deg, var(--green-lt) 0%, #fff 60%);
+  }
+  .popular-badge {
+    position: absolute;
+    top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--green);
+    color: #fff;
+    border-radius: 50px;
+    padding: 3px 16px;
+    font-size: 0.75rem; font-weight: 700;
+    white-space: nowrap;
+  }
+  .price-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .price-amount {
+    font-size: 3rem; font-weight: 800;
+    color: var(--green-dk);
+    line-height: 1;
+    margin: 1rem 0 0.25rem;
+  }
+  .price-period { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .price-list {
+    list-style: none;
+    text-align: right;
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .price-list li {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.88rem;
+  }
+  .price-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* ── HOW ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    counter-reset: step;
+  }
+  .step {
+    text-align: center;
+    padding: 1.5rem 1rem;
+  }
+  .step-num {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-size: 1.3rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .step p  { font-size: 0.83rem; color: var(--muted); }
+
+  /* ── PAYMENT ── */
+  .payment-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .payment-methods {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+  .pay-card {
+    background: var(--green-lt);
+    border: 1px solid var(--green-md);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.5rem;
+    flex: 1;
+    min-width: 180px;
+  }
+  .pay-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--green-dk); margin-bottom: 0.4rem; }
+  .pay-card p  { font-size: 0.83rem; color: var(--muted); }
+  .pay-card .num { font-weight: 800; color: var(--text); }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--green-dk);
+    color: #fff;
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+  .cta-section h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 1rem; }
+  .cta-section p  { font-size: 1rem; opacity: 0.85; margin-bottom: 2rem; }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff;
+    color: var(--green-dk);
+    border: none; border-radius: 50px;
+    padding: 14px 36px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem; font-weight: 800;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .btn-white:hover { transform: translateY(-2px); opacity: 0.93; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0a1a14;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.82rem;
+  }
+  footer strong { color: rgba(255,255,255,0.9); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .big-feat { grid-template-columns: 1fr; gap: 1.5rem; }
+    .big-feat.reverse { direction: rtl; }
+    nav { padding: 0 1rem; }
+    section { padding: 3.5rem 1.25rem; }
+    .stats-bar { gap: 1.5rem; }
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 48px; height: 4px;
+    background: var(--green);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    🧬 MedTerm<span> AI</span>
+  </div>
+  <a href="https://wa.me/970567459180" target="_blank" class="nav-cta">ابدأ مجاناً ←</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    متاح الآن على واتساب
+  </div>
+  <h1>مساعدك الذكي الذي لا<br>يتوقف عن <span class="accent">التعلم معك</span></h1>
+  <p>بوت واتساب مدعوم بأحدث تقنيات الذكاء الاصطناعي — يجيب، يحلل، يترجم، يقرأ الملفات والصور، ويتحدث معك بصوت طبيعي.</p>
+  <div class="hero-btns">
+    <a href="https://wa.me/970567459180" target="_blank" class="btn-primary">
+      💬 ابدأ المحادثة مجاناً
+    </a>
+    <a href="#features" class="btn-secondary">اكتشف المميزات</a>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-num">+3</span>
+    <span class="stat-lbl">نماذج ذكاء اصطناعي</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">24/7</span>
+    <span class="stat-lbl">متاح دون توقف</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">5₪</span>
+    <span class="stat-lbl">فقط في الشهر</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">∞</span>
+    <span class="stat-lbl">رسائل بلا حدود</span>
+  </div>
+</div>
+
+<!-- FEATURES GRID -->
+<section id="features" style="background: var(--page-bg);">
+  <div class="container">
+    <div class="section-tag">المميزات</div>
+    <h2 class="section-title">كل ما تحتاجه في رسالة واحدة</h2>
+    <p class="section-sub">لا تطبيقات، لا تسجيل، لا تعقيد — فقط واتساب وبوت ذكي يعرف كل شيء.</p>
+    <div class="divider"></div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🧠</div>
+        <h3>ذكاء اصطناعي متقدم</h3>
+        <p>مدعوم بأحدث نماذج AI يجيب على أي سؤال في أي مجال بدقة عالية وبلغتك.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🏥</div>
+        <h3>تخصص طبي شامل</h3>
+        <p>شرح المصطلحات الطبية، معلومات الأدوية والجرعات، تحليل نتائج الفحوصات والأشعة.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🖼️</div>
+        <h3>تحليل الصور بدقة</h3>
+        <p>يقرأ النصوص من الصور، يحلل التقارير الطبية والأشعة، ويجيب على أسئلتك من الصورة مباشرة.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📄</div>
+        <h3>قراءة ملفات PDF</h3>
+        <p>أرسل ملف PDF — يقرأه كاملاً ويجيب على أسئلتك منه، ويشرح أي صفحة بالتفصيل.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎙️</div>
+        <h3>رسائل صوتية ذكية</h3>
+        <p>يفهم رسائلك الصوتية ويرد عليها. يستخرج النص من الصوت. يدعم حتى 15 دقيقة للمشتركين.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔊</div>
+        <h3>تحويل النص لصوت</h3>
+        <p>اكتب أي نص أو فقرة كاملة ويرسلها لك كرسالة صوتية طبيعية بدون حد للطول.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌐</div>
+        <h3>ترجمة فورية + صوت</h3>
+        <p>يترجم أي نص بين العربية والإنجليزية ويرسل الترجمة نصاً وصوتاً في نفس الوقت.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <h3>سياق محادثة ذكي</h3>
+        <p>يتذكر المحادثة السابقة ويربط الأسئلة ببعضها. يعمل كمحادثة طبيعية مستمرة.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>إجابات فورية</h3>
+        <p>الأسئلة المتكررة تُحفظ ويُجاب عليها بسرعة فائقة. يعمل حتى على إنترنت ضعيف.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIG FEATURES -->
+<section style="background: #fff;">
+  <div class="container">
+    <div class="section-tag">تفاصيل المميزات</div>
+    <h2 class="section-title">كيف يعمل البوت؟</h2>
+    <p class="section-sub">تجربة محادثة طبيعية — كأنك تتحدث مع خبير حقيقي على واتساب.</p>
+    <div class="divider"></div>
+
+    <div class="big-features">
+
+      <!-- Feature 1 -->
+      <div class="big-feat">
+        <div class="big-feat-text">
+          <h2>ذكاء اصطناعي بلا قيود</h2>
+          <p>يجيب على أي سؤال في أي مجال — طب، علوم، قانون، برمجة، دين، تاريخ، طبخ وأكثر. لا يقول "خارج تخصصي" أبداً.</p>
+          <ul class="feat-list">
+            <li>بحث دقيق وإجابات موثوقة ومفصلة</li>
+            <li>يكتشف تلقائياً نوع السؤال ويختار أفضل نموذج</li>
+            <li>يتذكر سياق المحادثة ويربط الأسئلة ببعضها</li>
+            <li>يرد بلغتك تلقائياً (عربي أو إنجليزي)</li>
+          </ul>
+        </div>
+        <div class="big-feat-visual">
+          <div>
+            <div class="chat-label right">أنت</div>
+            <div class="chat-bubble chat-user">ما هو الباراسيتامول وما الجرعة المناسبة؟</div>
+          </div>
+          <div>
+            <div class="chat-label">MedTerm AI</div>
+            <div class="chat-bubble chat-bot">الباراسيتامول (Paracetamol) مسكن ألم وخافض حرارة آمن وشائع الاستخدام.<br><br>الجرعة للبالغ: 500–1000 مغ كل 4-6 ساعات. الحد الأقصى 4 غرام/يوم.<br><br>⚠️ راجع طبيبك إذا كنت تعاني من أمراض الكبد.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="big-feat reverse">
+        <div class="big-feat-visual">
+          <div>
+            <div class="chat-label right">أنت</div>
+            <div class="chat-bubble chat-user">📄 [كتاب طب.pdf] — اشرح الفصل الثاني</div>
+          </div>
+          <div>
+            <div class="chat-label">MedTerm AI</div>
+            <div class="chat-bubble chat-bot">📄 تم قراءة الملف بنجاح (127 صفحة)<br><br>وضع الملف مفعّل ✅ — يمكنك الآن:<br>• اسألني أي سؤال من الكتاب<br>• اكتب "صفحة 5" لشرح صفحة<br>• اكتب "ملخص" للملخص الكامل</div>
+          </div>
+        </div>
+        <div class="big-feat-text">
+          <h2>يقرأ ملفاتك ويجيب منها</h2>
+          <p>أرسل أي ملف PDF — كتاب، تقرير، ملاحظات دراسية — ويصبح البوت خبيراً في محتواه فوراً.</p>
+          <ul class="feat-list">
+            <li>قراءة كاملة للنصوص والصور داخل الملف</li>
+            <li>شرح أي صفحة بكتابة "صفحة [رقم]"</li>
+            <li>ملخص شامل بكتابة "ملخص"</li>
+            <li>إجابة على أي سؤال أو حل أي مسألة من الملف</li>
+            <li>حفظ الملف مشترك — لو رفعه شخص آخر يُحمَّل فوراً</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="big-feat">
+        <div class="big-feat-text">
+          <h2>يرى ويسمع ويتحدث</h2>
+          <p>أرسل صورة تحليل أو أشعة أو سجل رسالة صوتية — البوت يفهم كل شيء ويرد بنفس الطريقة التي تفضلها.</p>
+          <ul class="feat-list">
+            <li>تحليل الصور الطبية والتقارير بدقة عالية</li>
+            <li>قراءة النصوص من الصور (OCR) بدقة 100%</li>
+            <li>فهم الرسائل الصوتية والرد عليها</li>
+            <li>تحويل أي نص لصوت بدون حد للطول</li>
+            <li>استخراج نص الصوت بكتابة "!نص" مع الرسالة</li>
+          </ul>
+        </div>
+        <div class="big-feat-visual">
+          <div>
+            <div class="chat-label right">أنت</div>
+            <div class="chat-bubble chat-user">🖼️ [صورة تحليل دم]</div>
+          </div>
+          <div>
+            <div class="chat-label">MedTerm AI</div>
+            <div class="chat-bubble chat-bot">تحليل نتائج صورة دم كاملة (CBC):<br><br>✅ Hemoglobin: 13.2 g/dL — طبيعي<br>⚠️ WBC: 11.5 ×10³ — مرتفع قليلاً (طبيعي 4.5–11)<br>✅ Platelets: 245 ×10³ — طبيعي<br><br>التوصية: ارتفاع طفيف في خلايا الدم البيضاء قد يشير لعدوى. راجع طبيبك.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO START -->
+<section id="how" style="background: var(--green-lt);">
+  <div class="container">
+    <div class="section-tag">كيف تبدأ</div>
+    <h2 class="section-title">3 خطوات فقط</h2>
+    <p class="section-sub">ابدأ الاستخدام في أقل من دقيقة — بدون تنزيل أي تطبيق.</p>
+    <div class="divider"></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>افتح واتساب</h3>
+        <p>اضغط على الرابط أدناه وسيفتح واتساب مباشرة مع البوت.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>أرسل أي رسالة</h3>
+        <p>اكتب سؤالك أو أرسل صورة أو ملف PDF وسيرد البوت فوراً.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>اشترك واستمتع</h3>
+        <p>بعد الفترة التجريبية اشترك بـ 5 شيكل فقط وكل المميزات بلا حدود.</p>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="https://wa.me/970567459180" target="_blank" class="btn-primary" style="font-size: 1.1rem; padding: 16px 40px;">
+        💬 ابدأ الآن مجاناً
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background: #fff;">
+  <div class="container" style="text-align: center;">
+    <div class="section-tag">الأسعار</div>
+    <h2 class="section-title">أرخص بـ 20 مرة من المنافسين</h2>
+    <p class="section-sub">5 شيكل فقط في الشهر — أقل من كوب قهوة، وكل المميزات بلا قيود.</p>
+    <div class="divider" style="margin: 0 auto 3rem;"></div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">تجريبي مجاني</div>
+        <div class="price-amount">0₪</div>
+        <div class="price-period">للبدء والتجربة</div>
+        <ul class="price-list">
+          <li>20 رسالة نصية</li>
+          <li>5 صور للتحليل</li>
+          <li>رسائل صوتية (5 دقائق)</li>
+          <li>قراءة ملفات PDF (حتى 5MB)</li>
+          <li>ترجمة وتحويل نص لصوت</li>
+        </ul>
+        <a href="https://wa.me/970567459180" target="_blank" class="btn-secondary" style="display: block; text-align: center;">جرّب الآن</a>
+      </div>
+      <div class="price-card featured">
+        <div class="popular-badge">الأكثر طلباً</div>
+        <div class="price-name">اشتراك شهري</div>
+        <div class="price-amount">5₪</div>
+        <div class="price-period">شهرياً — بلا عقود</div>
+        <ul class="price-list">
+          <li>رسائل بلا حدود ♾️</li>
+          <li>صور بلا حدود ♾️</li>
+          <li>رسائل صوتية (15 دقيقة)</li>
+          <li>PDF حتى 20MB</li>
+          <li>ترجمة + صوت بلا حدود</li>
+          <li>سياق محادثة موسّع</li>
+          <li>دعم أولوي</li>
+        </ul>
+        <a href="https://wa.me/970567459180" target="_blank" class="btn-primary" style="display: block; text-align: center;">اشترك الآن</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT -->
+<section id="payment" style="background: var(--page-bg);">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+      <div class="section-tag">طرق الدفع</div>
+      <h2 class="section-title">ادفع بسهولة</h2>
+      <p class="section-sub">حوّل 5 شيكل عبر إحدى الطريقتين ثم راسل المهندس نادر لتفعيل اشتراكك فوراً.</p>
+    </div>
+    <div class="payment-box">
+      <div style="font-size: 1.5rem; margin-bottom: 1rem;">💳</div>
+      <div class="payment-methods">
+        <div class="pay-card">
+          <h4>بال باي</h4>
+          <p>الرقم: <span class="num">0597111855</span></p>
+          <p>باسم: <span class="num">إياد معروف</span></p>
+        </div>
+        <div class="pay-card">
+          <h4>جوال باي</h4>
+          <p>الرقم: <span class="num">0597111855</span></p>
+          <p>باسم: <span class="num">إياد معروف</span></p>
+        </div>
+      </div>
+      <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem;">بعد التحويل راسل المهندس نادر لتفعيل اشتراكك خلال دقائق</p>
+      <a href="https://wa.me/972593850520" target="_blank" class="btn-primary">
+        📲 راسل المهندس نادر
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>جاهز تجرّب؟</h2>
+  <p>ابدأ مجاناً الآن — لا تنزيل، لا تسجيل، فقط واتساب.</p>
+  <a href="https://wa.me/970567459180" target="_blank" class="btn-white">
+    💬 فتح المحادثة الآن
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <strong>MedTerm AI</strong> — جميع الحقوق محفوظة</p>
+  <p style="margin-top: 6px;">للتواصل والدعم: <a href="https://wa.me/972593850520" style="color: var(--green-md);">+972 59-385-0520</a></p>
+</footer>
+
+</body>
+</html>
